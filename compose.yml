@@ -1,0 +1,35 @@
+name: ${WP_STACK_NAME:-my-wordpress-stack}
+services:
+  wordpress:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        PHP_MAX_UPLOAD: ${WP_MAX_UPLOAD:-100M}
+        PHP_MAX_FILESIZE: ${WP_MAX_FILESIZE:-100M}
+    ports:
+      - ${WP_HOST_PORT:-8080}:80
+    environment:
+      WORDPRESS_DB_HOST: maria_db
+      WORDPRESS_DB_USER: ${WP_DB_USER:-my_db_user}
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD:-abc1234!}
+      WORDPRESS_DB_NAME: ${WP_DB_NAME:-my_db_name}
+      WORDPRESS_CONFIG_EXTRA: "define('WP_HOME','${WP_URL:-http://localhost}/'); define('WP_SITEURL','${WP_URL:-http://localhost}/');"
+    volumes:
+      - wordpress_html:/var/www/html
+  maria_db:
+    image: mariadb:lts
+    environment:
+      MARIADB_DATABASE: ${WP_DB_NAME:-my_db_name}
+      MARIADB_USER: ${WP_DB_USER:-my_db_user}
+      MARIADB_PASSWORD: ${WP_DB_PASSWORD:-abc1234!}
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: ${WP_DB_ALLOW_EMPTY_ROOT_PASSWORD:-false}
+      MARIADB_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
+    name: ${WP_DB_VOLUME_NAME:-my_wp_maria_sql_data}
+  wordpress_html:
+    name: ${WP_HTML_VOLUME_NAME:-my_wp_html_data}
