@@ -1,4 +1,4 @@
-FROM wordpress:6.7-php8.4-apache
+FROM wordpress:php8.4-apache
 
 ARG PHP_MAX_UPLOAD="20M"
 ARG PHP_MAX_FILESIZE="20M"
